@@ -31,6 +31,8 @@ jobs:
 
       - name: Publish to Github Packages Registry
         uses: elgohr/Publish-Docker-Github-Action@master
+        env:
+          REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
         with:
           name: ${{ github.repository }}/react-github-actions-app
           registry: docker.pkg.github.com
@@ -38,6 +40,7 @@ jobs:
           password: ${{ secrets.GIT_PASSWORD }}
           dockerfile: Dockerfile.prod
           tags: latest
+          buildargs: REACT_APP_BASE_URL
 
   DeployDev:
     name: Deploy to Dev
@@ -45,8 +48,8 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     environment:
-      name: development
-      url: 'http://142.93.215.210:8080'
+      name: Development
+      url: 'http://139.59.72.149:8080'
     steps:
       - name: Deploy package to digitalocean
         uses: appleboy/ssh-action@master
@@ -72,8 +75,8 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     environment:
-      name: production
-      url: 'http://142.93.215.210:8080'
+      name: Production
+      url: 'http://139.59.72.149:8080'
     steps:
       - name: Deploy package to digitalocean
         uses: appleboy/ssh-action@master
