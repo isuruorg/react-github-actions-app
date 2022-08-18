@@ -7,8 +7,51 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  BuildDev:
+    name: Build Dev
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    environment:
+      name: Development
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 16.10.0
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.10.0'
+
+      - name: Install packages and run unit-tests
+        run: |
+          yarn
+        env:
+          CI: true
+
+      - name: Publish to Github Packages Registry
+        uses: elgohr/Publish-Docker-Github-Action@v4
+        env:
+          REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
+        with:
+          name: ${{ github.repository }}/react-github-actions-app
+          registry: docker.pkg.github.com
+          username: ${{ secrets.GIT_USERNAME }}
+          password: ${{ secrets.GIT_PASSWORD }}
+          dockerfile: Dockerfile.prod
+          tags: latest
+          buildargs: REACT_APP_BASE_URL
+
+  BuildProd:
+    name: Build Prod
+    if: github.event.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
     steps:
       - name: Extract branch name
         shell: bash
