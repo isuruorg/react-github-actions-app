@@ -18,10 +18,10 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
-      - name: Use Node.js 16.x
+      - name: Use Node.js 16.10.0
         uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: '16.10.0'
 
       - name: Install packages and run unit-tests
         run: |
@@ -30,7 +30,9 @@ jobs:
           CI: true
 
       - name: Publish to Github Packages Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v4
+        env:
+          REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
         with:
           name: ${{ github.repository }}/react-github-actions-app
           registry: docker.pkg.github.com
@@ -38,6 +40,7 @@ jobs:
           password: ${{ secrets.GIT_PASSWORD }}
           dockerfile: Dockerfile.prod
           tags: latest
+          buildargs: REACT_APP_BASE_URL
 
   DeployDev:
     name: Deploy to Dev
@@ -45,8 +48,8 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     environment:
-      name: development
-      url: 'http://142.93.215.210:8080'
+      name: Development
+      url: 'http://159.89.163.208:8080'
     steps:
       - name: Deploy package to digitalocean
         uses: appleboy/ssh-action@master
@@ -64,7 +67,7 @@ jobs:
             docker rmi docker.pkg.github.com/${{ github.repository }}/react-github-actions-app -f
             docker login docker.pkg.github.com -u $GITHUB_USERNAME -p $GITHUB_TOKEN
             docker pull docker.pkg.github.com/${{ github.repository }}/react-github-actions-app:latest
-            docker run -dit -p 8080:80 docker.pkg.github.com/${{ github.repository }}/react-github-actions-app:latest
+            docker run -dit -e REACT_APP_BASE_URL='http://142.93.216.2:4000/api' -p 8080:80 docker.pkg.github.com/${{ github.repository }}/react-github-actions-app:latest
 
   DeployProd:
     name: Deploy to Production
@@ -72,8 +75,8 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     environment:
-      name: production
-      url: 'http://142.93.215.210:8080'
+      name: Production
+      url: 'http://159.89.163.208:8080'
     steps:
       - name: Deploy package to digitalocean
         uses: appleboy/ssh-action@master
