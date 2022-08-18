@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Development
-      url: 'http://139.59.72.149:8080'
+      url: 'http://159.89.163.208:8080'
     steps:
       - name: Deploy package to digitalocean
         uses: appleboy/ssh-action@master
@@ -76,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Production
-      url: 'http://139.59.72.149:8080'
+      url: 'http://159.89.163.208:8080'
     steps:
       - name: Deploy package to digitalocean
         uses: appleboy/ssh-action@master
