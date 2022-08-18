@@ -67,7 +67,7 @@ jobs:
             docker rmi docker.pkg.github.com/${{ github.repository }}/react-github-actions-app -f
             docker login docker.pkg.github.com -u $GITHUB_USERNAME -p $GITHUB_TOKEN
             docker pull docker.pkg.github.com/${{ github.repository }}/react-github-actions-app:latest
-            docker run -dit -p 8080:80 -e REACT_APP_BASE_URL='http://142.93.216.2:4000/api' docker.pkg.github.com/${{ github.repository }}/react-github-actions-app:latest
+            docker run -dit -e REACT_APP_BASE_URL='http://142.93.216.2:4000/api' -p 8080:80 docker.pkg.github.com/${{ github.repository }}/react-github-actions-app:latest
 
   DeployProd:
     name: Deploy to Production
