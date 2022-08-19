@@ -1,4 +1,4 @@
-name: build
+name: Tracclaw CI/CD
 
 on:
   push:
