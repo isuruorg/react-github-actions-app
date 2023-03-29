@@ -30,7 +30,7 @@ jobs:
           CI: true
 
       - name: Publish to Github Packages Registry
-        uses: elgohr/Publish-Docker-Github-Action@v4
+        uses: elgohr/Publish-Docker-Github-Action@v5
         env:
           REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
         with:
